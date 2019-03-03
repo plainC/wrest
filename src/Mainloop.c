@@ -5,6 +5,8 @@
 
 CONSTRUCT(Mainloop)
 {
+    if (!self->timeout_usec)
+        self->timeout_usec = 10000;
 }
 
 FINALIZE(Mainloop)
@@ -14,7 +16,7 @@ FINALIZE(Mainloop)
 METHOD(Mainloop,public,void,add,(struct ActivityRegular* a))
 {
     W_DYNAMIC_ARRAY_PUSH(self->activities, a);
-    a->due = a->sec;
+    a->due = a->usec;
     printf("Added activity: %s\n", a->name);
 }
 

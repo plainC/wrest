@@ -5,8 +5,8 @@
 
 CONSTRUCT(ActivityRegular)
 {
-    if (!self->sec && !self->usec)
-        self->sec = 3;
+    if (!self->usec)
+        self->usec = 3000000;
 }
 
 #include <wondermacros/objects/x/class_end.h>

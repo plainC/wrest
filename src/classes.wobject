@@ -13,7 +13,6 @@ abstract class Activity
 class ActivityRegular : Activity
   construct
 
-  read time_t sec
   read unsigned usec
   public time_t due
 
@@ -39,6 +38,7 @@ abstract class Mainloop
   public void run()
 
   private struct ActivityRegular** activities;
+  read unsigned timeout_usec;
 
 
 class MainloopSelect : Mainloop
