@@ -1,0 +1,54 @@
+#include all "wrest.h"
+
+guard WREST
+
+abstract class Activity
+  public char* name
+  public void run()
+  public int is_active()    // Is runnable or idle
+  public int is_finished()  // Is completed. Can be destroyed
+
+
+#include <time.h>
+class ActivityRegular : Activity
+  construct
+
+  read time_t sec
+  read unsigned usec
+  public time_t due
+
+
+class ActivityRegularCb : ActivityRegular
+  construct
+
+  override run
+  override is_active
+  override is_finished
+
+  read wrest_activity_cb cb;
+typedef void (*wrest_activity_cb)(void* handle);
+
+
+uses Activity
+uses ActivityRegular
+abstract class Mainloop
+  construct
+  finalize
+
+  public void add(struct ActivityRegular* a)
+  public void run()
+
+  private struct ActivityRegular** activities;
+
+
+class MainloopSelect : Mainloop
+  construct
+  finalize
+  override run
+
+  private int nfds
+  private fd_set* readfds
+  private fd_set* writefds
+  private fd_set* exceptfds
+  private struct timeval timeout
+
