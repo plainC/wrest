@@ -2,53 +2,63 @@
 
 guard WREST
 
-abstract class Activity
-  public char* name
-  public void run()
-  public int is_active()    // Is runnable or idle
-  public int is_finished()  // Is completed. Can be destroyed
 
 
-#include <time.h>
-class ActivityRegular : Activity
-  construct
+class WrestIOStream
+  read int fd
 
+class WrestInStream : WrestIOStream
+
+class WrestOutStream : WrestIOStream
+
+
+abstract class WrestCoroutine
+  public int eval()
+  read void* context
+  public int completed
+#include "wrest_coroutine.h"
+enum WrestEvalStatus { WrestEvalStatusOk, WrestEvalStatusFailed, WrestEvalStatusYield };
+
+
+class WrestFib : WrestCoroutine
+  override eval
+
+
+class WrestTimeout
+  public void eval()
+  public void* data
   read unsigned usec
-  public time_t due
+  read struct WrestCoroutine* task
 
 
-class ActivityRegularCb : ActivityRegular
-  construct
-
-  override run
-  override is_active
-  override is_finished
-
-  read wrest_activity_cb cb;
-typedef void (*wrest_activity_cb)(void* handle);
-
-
-uses Activity
-uses ActivityRegular
-abstract class Mainloop
+class TestTimeout : WrestTimeout
   construct
   finalize
+  read struct WrestOutStream* out
 
-  public void add(struct ActivityRegular* a)
+
+abstract class WrestMainloop
+  construct
+  finalize
   public void run()
+  public int add_task(struct WrestCoroutine* task)
+  public int add_timeout(struct WrestTimeout* timeout)
+  public int add_istream(struct WrestInStream* istream)
+  public int add_ostream(struct WrestOutStream* ostream)
 
-  private struct ActivityRegular** activities;
-  read unsigned timeout_usec;
+  private struct WrestCoroutine** tasks;
+  private struct WrestTimeout** timeouts;
+  private struct WrestInStream** istreams;
+  private struct WrestOutStream** ostreams;
 
 
-class MainloopSelect : Mainloop
+class WrestMainloopSelect : WrestMainloop
   construct
   finalize
-  override run
 
   private int nfds
-  private fd_set* readfds
-  private fd_set* writefds
-  private fd_set* exceptfds
+  private fd_set readfds
+  private fd_set writefds
+  private fd_set exceptfds
   private struct timeval timeout
 

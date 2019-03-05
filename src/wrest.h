@@ -3,17 +3,20 @@
 
 #define W_OBJECT_CAST_TO_VOID
 
-#include <stdlib.h>
-#include <stdio.h>
+#ifndef WDEBUG_EXPAND
+# include <stdlib.h>
+# include <stdarg.h>
+# include <stdio.h>
+# include <time.h>
+#endif
+
 #include <wondermacros/objects/api.h>
+#include <wondermacros/objects/meta.h>
 #include <wondermacros/array/dynamic_array.h>
 
+#include "log.h"
 #include "forward_declare.h"
-#include "Activity.h"
-#include "ActivityRegular.h"
-#include "ActivityRegularCb.h"
-#include "Mainloop.h"
-#include "MainloopSelect.h"
+#include "classes.h"
 
 #endif
 
