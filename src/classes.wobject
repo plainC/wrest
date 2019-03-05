@@ -21,31 +21,39 @@ enum WrestEvalStatus { WrestEvalStatusOk, WrestEvalStatusFailed, WrestEvalStatus
 
 
 class WrestFib : WrestCoroutine
+  construct
   override eval
 
 
 class WrestTimeout
-  public void eval()
+  public int eval()
   public void* data
+  public int completed
   read unsigned usec
+  public unsigned due_us
   read struct WrestCoroutine* task
 
 
 class TestTimeout : WrestTimeout
   construct
   finalize
+  override eval
   read struct WrestOutStream* out
+  read struct WrestMainloop* loop
 
 
 abstract class WrestMainloop
   construct
   finalize
   public void run()
+  private int wait()
+
   public int add_task(struct WrestCoroutine* task)
   public int add_timeout(struct WrestTimeout* timeout)
   public int add_istream(struct WrestInStream* istream)
   public int add_ostream(struct WrestOutStream* ostream)
 
+  read unsigned timeout_us;
   private struct WrestCoroutine** tasks;
   private struct WrestTimeout** timeouts;
   private struct WrestInStream** istreams;
@@ -55,6 +63,9 @@ abstract class WrestMainloop
 class WrestMainloopSelect : WrestMainloop
   construct
   finalize
+  private void prepare_wait()
+  private int handle_events(int status)
+  override wait
 
   private int nfds
   private fd_set readfds

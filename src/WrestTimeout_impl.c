@@ -2,6 +2,7 @@
 
 M__eval
 {
+    return 0;
 }
 
 #endif

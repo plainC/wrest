@@ -1,5 +1,9 @@
 #ifdef EXPAND_C
 
+CONSTRUCT(WrestFib)
+{
+    self->completed = 0;
+}
 
 METHOD(WrestFib,public,int,eval)
 {
@@ -9,7 +13,6 @@ METHOD(WrestFib,public,int,eval)
         int i;
         int max;
     W_CCR_CONTEXT_END;
-
     W_CCR_BEGIN;
         CTX->max = 46;
         int fib = CTX->p = CTX->n = 0;

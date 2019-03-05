@@ -22,4 +22,4 @@ $(OBJS): $(SRCS) $(HEADERS) $(CLASSES) $(C_SRCS) test.c
 	cc -c $(CFLAGS) test.c $^
 
 clean:
-	rm -f test test.o $(OBJS) *.gch $(CLASSES) $(HEADERS) $(SRCS) classes.h forward_declare.h
+	rm -f test test.o $(OBJS) *.gch $(CLASSES) $(HEADERS) $(SRCS) classes.h forward_declare.h *.o
