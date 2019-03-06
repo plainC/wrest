@@ -12,6 +12,7 @@
 
 #include <wondermacros/objects/api.h>
 #include <wondermacros/objects/meta.h>
+#include <wondermacros/math/min.h>
 #include <wondermacros/array/dynamic_array.h>
 
 #include "log.h"

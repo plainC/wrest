@@ -1,6 +1,6 @@
 #ifdef EXPAND_C
 
-M__eval
+METHOD(WrestTimeout,public,int,eval)
 {
     return 0;
 }

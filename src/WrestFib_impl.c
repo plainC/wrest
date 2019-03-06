@@ -2,7 +2,6 @@
 
 CONSTRUCT(WrestFib)
 {
-    self->completed = 0;
 }
 
 METHOD(WrestFib,public,int,eval)

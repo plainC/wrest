@@ -3,21 +3,25 @@
 guard WREST
 
 
-
 class WrestIOStream
+  read struct WrestMainloop* loop
   read int fd
+  public int waiting
 
 class WrestInStream : WrestIOStream
 
 class WrestOutStream : WrestIOStream
+  construct
+  public int write(const char* buffer, size_t size)
 
 
+#include "wrest_coroutine.h"
+enum WrestEvalStatus { WrestEvalStatusReady=0, WrestEvalStatusYield=1, WrestEvalStatusBlocked=2, WrestEvalStatusError=4, WrestEvalStatusCompleted=8 };
 abstract class WrestCoroutine
   public int eval()
   read void* context
-  public int completed
-#include "wrest_coroutine.h"
-enum WrestEvalStatus { WrestEvalStatusOk, WrestEvalStatusFailed, WrestEvalStatusYield };
+  public int status
+  read int data
 
 
 class WrestFib : WrestCoroutine
@@ -25,10 +29,14 @@ class WrestFib : WrestCoroutine
   override eval
 
 
-class WrestTimeout
-  public int eval()
-  public void* data
-  public int completed
+class WrestWrite : WrestCoroutine
+  override eval
+  read struct WrestOutStream* ostream
+  read char* buffer
+  read size_t size
+
+
+class WrestTimeout : WrestCoroutine
   read unsigned usec
   public unsigned due_us
   read struct WrestCoroutine* task
@@ -52,12 +60,15 @@ abstract class WrestMainloop
   public int add_timeout(struct WrestTimeout* timeout)
   public int add_istream(struct WrestInStream* istream)
   public int add_ostream(struct WrestOutStream* ostream)
+  private void eval_task(struct WrestCoroutine* task, struct WrestCoroutine*** ready, struct WrestCoroutine*** blocked)
 
-  read unsigned timeout_us;
-  private struct WrestCoroutine** tasks;
-  private struct WrestTimeout** timeouts;
-  private struct WrestInStream** istreams;
-  private struct WrestOutStream** ostreams;
+  read unsigned timeout_us
+  read unsigned buffer_size
+  private struct WrestCoroutine** ready_tasks
+  private struct WrestCoroutine** blocked_tasks
+  private struct WrestTimeout** timeouts
+  private struct WrestInStream** istreams
+  private struct WrestOutStream** ostreams
 
 
 class WrestMainloopSelect : WrestMainloop

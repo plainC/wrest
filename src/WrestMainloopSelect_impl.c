@@ -19,26 +19,43 @@ FINALIZE(WrestMainloopSelect)
 {
 }
 
+/* This is called just before entering select. */
 M__prepare_wait
 {
+    /* Reset select timeout. */
     self->timeout.tv_usec = self->timeout_us;
+
+    W_DYNAMIC_ARRAY_FOR_EACH(struct WrestCoroutine*, task, self->blocked_tasks) {
+        FD_SET(task->data /* has the blocking fd */, &self->writefds);
+    }
 }
 
+/* This is called when select returns. */
 M__handle_events
 {
     if (status >= 1) {
+        W_DYNAMIC_ARRAY_FOR_EACH(struct WrestCoroutine*, task, self->blocked_tasks) {
+            if (FD_ISSET(task->data /* has the blocking fd */, &self->writefds))
+                W_CALL(self,add_task)(task);
+        }
     }
 
+    /* Reset due times in timeouts. */
+    struct WrestCoroutine** ready = NULL;
+    struct WrestCoroutine** blocked = NULL;
     W_DYNAMIC_ARRAY_FOR_EACH(struct WrestTimeout*, timeout, self->timeouts) {
-        if (timeout->completed)
-            continue;
-
         if (timeout->due_us <= self->timeout_us) {
             timeout->due_us = timeout->usec;
-            timeout->completed = W_CALL_VOID(timeout,eval);
-        } else
+            W_CALL(self,eval_task)(W_OBJECT_AS(timeout,WrestCoroutine),&ready,&blocked);
+        } else {
             timeout->due_us -= self->timeout_us;
+            W_DYNAMIC_ARRAY_PUSH(ready, W_OBJECT_AS(timeout,WrestCoroutine));
+        }
     }
+
+    W_DYNAMIC_ARRAY_FREE(self->timeouts);
+    self->timeouts = (void*) ready;
+    /* FIXME: Add blocking timeouts */
 }
 
 METHOD(WrestMainloopSelect,private,int,wait)
@@ -52,4 +69,3 @@ METHOD(WrestMainloopSelect,private,int,wait)
 }
 
 #endif
-

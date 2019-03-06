@@ -5,6 +5,9 @@ CONSTRUCT(WrestMainloop)
     if (!self->timeout_us)
         self->timeout_us = 1000;
 
+    if (!self->buffer_size)
+        self->buffer_size = 256;
+
     wrest_log("Mainloop: created");
 }
 
@@ -16,31 +19,51 @@ M__add_istream
 {
 }
 
+M__eval_task
+{
+            switch ((task->status = W_CALL_VOID(task,eval))) {
+            case WrestEvalStatusYield:
+                W_DYNAMIC_ARRAY_PUSH(*ready, task);
+                printf("@ %d\n",((struct { int value; }*) (task->context))->value);
+                break;
+            case WrestEvalStatusBlocked:
+                W_DYNAMIC_ARRAY_PUSH(*blocked, task);
+                break;
+            case WrestEvalStatusError:
+                wrest_log("Error: %s",strerror(task->data));
+                W_CALL_VOID(task,free);
+                break;
+            case WrestEvalStatusReady:
+                W_DYNAMIC_ARRAY_PUSH(*ready, task);
+                break;
+            case WrestEvalStatusCompleted:
+                /* Fixme: chain the results. */
+                W_CALL_VOID(task,free);
+                break;
+            default:
+                wrest_log("Error: invalid status of task");
+                break;
+            }
+}
+
 M__run
 {
     int status;
 
     do {
 
-        W_DYNAMIC_ARRAY_FOR_EACH(struct WrestCoroutine*, task, self->tasks) {
-            if (task->completed)
-                continue;
+        /* Execute all tasks ready. */
+        struct WrestCoroutine** ready = NULL;
+        struct WrestCoroutine** blocked = NULL;
 
-            switch (W_CALL_VOID(task,eval)) {
-            case WrestEvalStatusYield:
-                printf("@=%d\n",((struct { int value; }*) (task->context))->value);
-                break;
-            case WrestEvalStatusFailed:
-                wrest_log("Error: task failed");
-                /* Fall through */
-            case WrestEvalStatusOk:
-                task->completed = 1;
-                break;
-            default:
-                wrest_log("Error: invalid status of task");
-                break;
-            }
+        W_DYNAMIC_ARRAY_FOR_EACH(struct WrestCoroutine*, task, self->ready_tasks) {
+            W_CALL(self,eval_task)(task, &ready, &blocked);
         }
+
+        W_DYNAMIC_ARRAY_FREE(self->ready_tasks);
+        W_DYNAMIC_ARRAY_FREE(self->blocked_tasks);
+        self->ready_tasks = ready;
+        self->blocked_tasks = blocked;
 
         W_CALL_VOID(self,wait);
 
@@ -53,6 +76,7 @@ M__wait
 
 M__add_ostream
 {
+    W_DYNAMIC_ARRAY_PUSH(self->ostreams, ostream);
 }
 
 M__add_timeout
@@ -63,8 +87,7 @@ M__add_timeout
 
 M__add_task
 {
-printf("Add task:%d\n", task->completed);
-    W_DYNAMIC_ARRAY_PUSH(self->tasks, task);
+    W_DYNAMIC_ARRAY_PUSH(self->ready_tasks, task);
 }
 
 #endif

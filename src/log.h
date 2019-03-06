@@ -3,11 +3,11 @@ wrest_log(const char* fmt, ...)
 {
     va_list ap;
     int n;
-    n = fprintf(stderr, "[] ");
+    n = fprintf(stdout, "[] ");
     va_start(ap, fmt);
-    n += vfprintf(stderr, fmt, ap);
+    n += vfprintf(stdout, fmt, ap);
     va_end(ap);
-    fprintf(stderr, "\n");
+    fprintf(stdout, "\n");
     return n+1;
 }
 

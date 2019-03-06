@@ -57,7 +57,7 @@
     }                                    \
     free(self->context);                 \
     self->context = NULL;                \
-    return WrestEvalStatusOk
+    return WrestEvalStatusCompleted
 
 #define W_CCR_YIELD(z)                   \
         do {                             \
@@ -67,12 +67,28 @@
             case __LINE__:;              \
         } while (0)
 
+#define W_CCR_BLOCK(fd)                    \
+        do {                               \
+            CTX->_line=__LINE__;           \
+            self->data=(fd);               \
+            return WrestEvalStatusBlocked; \
+            case __LINE__:;                \
+        } while (0)
+
+#define W_CCR_ERROR(e)                     \
+        do {                               \
+            CTX->_line=__LINE__;           \
+            self->data = (e);              \
+            return WrestEvalStatusError;   \
+            case __LINE__:;                \
+        } while (0)
+
 #define W_CCR_RETURN(z)                  \
     do {                                 \
         W_CCR_YIELD(z);                  \
         free(self->context);             \
         self->context=NULL;              \
-        return WrestEvalStatusOk;        \
+        return WrestEvalStatusCompleted; \
     } while (0)
 
 #endif
