@@ -1,6 +1,6 @@
 CFLAGS =            \
 	-I .        \
-	-I ../../.. \
+	-I ../../wondermacros/wondermacros \
         -g          \
 
 CLASSES = $(wildcard *_class.h)
@@ -13,13 +13,13 @@ all: build_src
 
 build_src: classes.wobject
 	../../wondermacros/tools/wobject -c classes.wobject
-	echo "\nTo build type 'make test'"
+	echo "\nTo build type 'make server'"
 
-test: $(OBJS) test.o WrestMainloop_class.h
-	cc -o test test.o $(OBJS)
+server: $(OBJS) server.o UVloop_class.h
+	cc -o server server.o $(OBJS) -luv
 
-$(OBJS): $(SRCS) $(HEADERS) $(CLASSES) $(C_SRCS) test.c
-	cc -c $(CFLAGS) test.c $^
+$(OBJS): $(SRCS) $(HEADERS) $(CLASSES) $(C_SRCS) server.c
+	cc -c $(CFLAGS) server.c $^
 
 clean:
-	rm -f test test.o $(OBJS) *.gch $(CLASSES) $(HEADERS) $(SRCS) classes.h forward_declare.h *.o
+	rm -f server server.o $(OBJS) *.gch $(CLASSES) $(HEADERS) $(SRCS) classes.h forward_declare.h *.o

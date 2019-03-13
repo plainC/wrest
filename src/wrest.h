@@ -4,19 +4,21 @@
 #define W_OBJECT_CAST_TO_VOID
 
 #ifndef WDEBUG_EXPAND
-# include <stdlib.h>
-# include <stdarg.h>
 # include <stdio.h>
-# include <time.h>
+# include <stdlib.h>
+# include <string.h>
+# include <unistd.h>
+# include <uv.h>
+# include <wondermacros/objects/meta.h>
+# include <wondermacros/array/dynamic_array.h>
 #endif
 
+#include <wondermacros/list/cslist.h>
 #include <wondermacros/objects/api.h>
-#include <wondermacros/objects/meta.h>
-#include <wondermacros/math/min.h>
-#include <wondermacros/array/dynamic_array.h>
 
-#include "log.h"
-#include "forward_declare.h"
+struct str_rope { struct str_rope* next; const char* str; size_t size; };
+typedef struct str_rope str_rope_t;
+
 #include "classes.h"
 
 #endif
