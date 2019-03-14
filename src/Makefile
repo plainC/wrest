@@ -24,4 +24,4 @@ $(OBJS): $(SRCS) $(HEADERS) $(CLASSES) $(C_SRCS) server.c
 	cc -c $(CFLAGS) server.c client.c $^
 
 clean:
-	rm -f server server.o client client.o $(OBJS) *.gch $(CLASSES) $(HEADERS) $(SRCS) classes.h forward_declare.h *.o
+	rm -f server server.o client client.o $(OBJS) *.gch *.o

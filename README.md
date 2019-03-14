@@ -35,7 +35,7 @@ This is just a demo at a moment.
 
 ## To use
 
-Wrest provides signals for each Rest protocol commands. Just bind a callback
+Wrest provides signals for each REST protocol command. Just bind a callback
 function each one of them (`on_get`, `on_post`, `on_put`, `on_patch`, etc.).
 In addition, bind also `on_error`. Binding is done, for instance
 
@@ -43,12 +43,13 @@ In addition, bind also `on_error`. Binding is done, for instance
 W_OBJECT_SIGNAL_TYPE* handle;
 
 W_CONNECT(server,on_error, error_cb, handle);
+
 W_CONNECT(server,on_get, get_cb, handle);
 W_CONNECT(server,on_post, post_cb, handle);
 ```
 
 Each REST command is then an independent function. To implement `GET` just
-provide a callback.
+provide a callback function.
 ```
 void
 get_cb(struct UVtcpServer* self, void* context, const char* uri,
@@ -74,3 +75,4 @@ post_cb(struct UVtcpServer* self, void* context, const char* uri, char* body,
     *response_size = 6;
 }
 ```
+See a full [server source code](https://github.com/plainC/wrest/blob/master/src/server.c) for more details.

@@ -15,7 +15,7 @@ quit_cb(struct UVtcpServer* self, void* context, const char* uri,
     *response = strdup("QUIT ok");
     *response_size = strlen(*response);
 
-    uv_stop((uv_loop_t*) self->loop->loop);
+    W_CALL_VOID(self->loop,stop);
 }
 
 void
