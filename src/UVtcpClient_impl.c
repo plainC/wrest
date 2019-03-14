@@ -8,6 +8,11 @@ CONSTRUCT(UVtcpClient)
         uv_tcp_init((uv_loop_t*) self->loop->loop, &self->handle);
 }
 
+FINALIZE(UVtcpClient)
+{
+    free(self->conn);
+}
+
 static void
 on_read(uv_stream_t *server, ssize_t nread, const uv_buf_t* buf)
 {

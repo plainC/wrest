@@ -50,5 +50,6 @@ class UVtcpClient : UVtcp
   private size_t len
 
   construct
+  finalize
   public int connect(const char* message, size_t len)
 

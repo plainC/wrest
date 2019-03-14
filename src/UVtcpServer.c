@@ -3,8 +3,8 @@
 #include "UVtcpServer_class.h"
 #include <wondermacros/objects/x/class_start.h>
 
-#define M__bind METHOD(UVtcpServer,public,int,bind,(int flags))
 #define M__listen METHOD(UVtcpServer,public,int,listen,(int backlog))
+#define M__bind METHOD(UVtcpServer,public,int,bind,(int flags))
 #define EXPAND_C
 #include "UVtcpServer_impl.c"
 

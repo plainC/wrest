@@ -49,6 +49,7 @@ int main(int argc, char** argv)
     W_CALL(client,connect)(buffer,strlen(buffer));
     W_CALL(loop,run)(UV_RUN_DEFAULT);
 
+    W_CALL_VOID(client,free);
     W_CALL_VOID(loop,free);
 
     return 0;

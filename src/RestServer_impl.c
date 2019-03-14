@@ -66,7 +66,7 @@ data_cb(struct RestServer* self, void* context, const char* data, size_t length,
     }
     const char* command = data;
     char* uri = strndup(data + mark_command + 1, mark_uri-mark_command-1);
-    const char* body = mark_body ? data + mark_body : NULL;
+    const char* body = mark_body ? strndup(data + mark_body, length-mark_body) : NULL;
 
     size_t len_command = mark_command;
     size_t len_uri = mark_uri - mark_command;
@@ -87,6 +87,7 @@ data_cb(struct RestServer* self, void* context, const char* data, size_t length,
         W_EMIT(self,on_error, "Invalid command");
 
     free(uri);
+    free((void*) body);
 }
 
 #endif
