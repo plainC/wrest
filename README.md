@@ -5,8 +5,10 @@ protocol using [libuv](https://en.wikipedia.org/wiki/Libuv) in plain C. We
 use [object-oriented programming](https://en.wikipedia.org/wiki/Object-oriented_programming)
 to wrap libuv and the actions. The object system is provided by [Wondermacros](https://github.com/plainc/wondermacros).
 
-Building a REST service with Wrest could not be easier in C. Just bind a callback
-function to each REST command.
+Building a REST service with Wrest could not be easier in C. Just write a
+dynamically loaded library of functions that implement the REST commands.
+When the server is started, use `-m PATH` option to load a specific REST
+service.
 
 ## To Build
 
@@ -16,8 +18,11 @@ function to each REST command.
 
 ## How to run
 
-To start the server, type `./server`. It will start the server in `127.0.0.1`
-on port 8000 (edit `server.c` to change). To run the client type
+To start the server, type `./server -m ./librest.so`. It will start the
+server in address `0.0.0.0` on port 9000. To change the IP port, use
+`-p INT` option. To change the IP address, type the address as last argument.
+
+To run the client type
 
 ```
 ./client GET /

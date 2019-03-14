@@ -1,5 +1,8 @@
 #ifdef EXPAND_C
 
+#include <boost/preprocessor/control/expr_if.hpp>
+#include <boost/preprocessor/punctuation/comma_if.hpp>
+
 static void
 data_cb(struct RestServer* self, void* context, const char* data, size_t length,
         char** response, size_t* response_size);
@@ -71,20 +74,20 @@ data_cb(struct RestServer* self, void* context, const char* data, size_t length,
     size_t len_command = mark_command;
     size_t len_uri = mark_uri - mark_command;
 
-#define COMMAND(uc,lc) \
+#define COMMAND(uc,lc,has_body) \
     if (len_command == strlen(#uc) && strncmp(command, #uc, strlen(#uc))==0) \
-        W_EMIT(self,on_##lc, uri, response, response_size);
+        W_EMIT(self,on_##lc, uri BOOST_PP_COMMA_IF(has_body) BOOST_PP_EXPR_IF(has_body,body), response, response_size);
 
-    COMMAND(GET,get)
-    else COMMAND(POST,post)
-    else COMMAND(PUT,put)
-    else COMMAND(PATCH,patch)
-    else COMMAND(DELETE,delete)
-    else COMMAND(HEAD,head)
-    else COMMAND(CONNECT,connect)
-    else COMMAND(OPTIONS,options)
-    else COMMAND(TRACE,trace)
-    else COMMAND(QUIT,quit)
+    COMMAND(GET,get,0)
+    else COMMAND(POST,post,1)
+    else COMMAND(PUT,put,1)
+    else COMMAND(PATCH,patch,1)
+    else COMMAND(DELETE,delete,0)
+    else COMMAND(HEAD,head,0)
+    else COMMAND(CONNECT,connect,0)
+    else COMMAND(OPTIONS,options,1)
+    else COMMAND(TRACE,trace,0)
+    else COMMAND(QUIT,quit,0)
     else
         W_EMIT(self,on_error, "Invalid command");
 

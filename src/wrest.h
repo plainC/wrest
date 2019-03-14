@@ -16,8 +16,6 @@
 #include <wondermacros/list/cslist.h>
 #include <wondermacros/objects/api.h>
 
-struct str_rope { struct str_rope* next; const char* str; size_t size; };
-typedef struct str_rope str_rope_t;
 
 #include "classes.h"
 

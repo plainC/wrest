@@ -26,8 +26,8 @@ int main(int argc, char** argv)
     struct UVloop* loop = W_NEW(UVloop);
     struct UVtcpClient* client = W_NEW(UVtcpClient,
         .loop = loop,
-        .address="127.0.0.1",
-        .port=8000);
+        .address="0.0.0.0",
+        .port=9000);
 
     char* command = "GET";
     char* uri = "/";
