@@ -41,6 +41,10 @@ class RestServer : UVtcpServer
   signal on_put(char* uri, char* body, char** response, size_t* response_length)
   signal on_patch(char* uri, char* body, char** response, size_t* response_length)
   signal on_delete(char* uri, char** response, size_t* response_length)
+  signal on_head(char* uri, char** response, size_t* response_length)
+  signal on_connect(char* uri, char** response, size_t* response_length)
+  signal on_options(char* uri, char* body, char** response, size_t* response_length)
+  signal on_trace(char* uri, char** response, size_t* response_length)
   signal on_quit(char* uri, char** response, size_t* response_length)
 
 

@@ -71,20 +71,24 @@ data_cb(struct RestServer* self, void* context, const char* data, size_t length,
     size_t len_command = mark_command;
     size_t len_uri = mark_uri - mark_command;
 
-    if (len_command == 3 && strncmp(command, "GET", 3)==0)
-        W_EMIT(self,on_get, uri, response, response_size);
-    else if (len_command == 4 && strncmp(command, "POST", 4)==0)
-        W_EMIT(self,on_post, uri, body, response, response_size);
-    else if (len_command == 3 && strncmp(command, "PUT", 3)==0)
-        W_EMIT(self,on_put, uri, body, response, response_size);
-    else if (len_command == 5 && strncmp(command, "PATCH", 5)==0)
-        W_EMIT(self,on_patch, uri, body, response, response_size);
-    else if (len_command == 6 && strncmp(command, "DELETE", 6)==0)
-        W_EMIT(self,on_delete, uri, response, response_size);
-    else if (len_command == 4 && strncmp(command, "QUIT", 4)==0)
-        W_EMIT(self,on_quit, uri, response, response_size);
+#define COMMAND(uc,lc) \
+    if (len_command == strlen(#uc) && strncmp(command, #uc, strlen(#uc))==0) \
+        W_EMIT(self,on_##lc, uri, response, response_size);
+
+    COMMAND(GET,get)
+    else COMMAND(POST,post)
+    else COMMAND(PUT,put)
+    else COMMAND(PATCH,patch)
+    else COMMAND(DELETE,delete)
+    else COMMAND(HEAD,head)
+    else COMMAND(CONNECT,connect)
+    else COMMAND(OPTIONS,options)
+    else COMMAND(TRACE,trace)
+    else COMMAND(QUIT,quit)
     else
         W_EMIT(self,on_error, "Invalid command");
+
+#undef COMMAND
 
     free(uri);
     free((void*) body);
