@@ -6,7 +6,7 @@ use [object-oriented programming](https://en.wikipedia.org/wiki/Object-oriented_
 to wrap libuv and the actions. The object system is provided by [Wondermacros](https://github.com/plainc/wondermacros).
 
 Building a REST service with Wrest could not be easier in C. Just bind a callback
-function to each REST command. The easies
+function to each REST command.
 
 ## To Build
 
