@@ -23,6 +23,7 @@ M__bind
     return uv_tcp_bind(&self->handle, (const struct sockaddr*) &self->addr, flags);
 }
 
+uv_stream_t* client_handle;
 
 static void
 on_alloc_buffer(uv_handle_t *handle, size_t size, uv_buf_t *buf)
@@ -41,6 +42,7 @@ on_write(uv_write_t *req, int status)
     else
         W_EMIT(self,on_connection_close, "");
 
+    uv_close((uv_handle_t*) client_handle, NULL);
     free(req);
 }
 
@@ -68,6 +70,7 @@ on_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buf)
         uv_write_t *req = (uv_write_t *) malloc(sizeof(uv_write_t));
         uv_buf_t write_buf = uv_buf_init(response, response_size);
         req->data = W_OBJECT_AS(conn,UVtcpServer);
+        client_handle = client;
         uv_write(req, client, &write_buf, 1, on_write);
         free(response);
     }
