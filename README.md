@@ -26,7 +26,7 @@ gcc -o libmylib.so -shared -FPIC mylib.o
 
 ## How to run
 
-To start the server, type e.g. `./server -m ./librest.so`. It will start the
+To start the server, type e.g. `./wrest -m ./librest.so`. It will start the
 server in address `0.0.0.0` on port 9000. To change the IP port, use
 `-p INT` option. To change the IP address, type the address as last argument.
 
