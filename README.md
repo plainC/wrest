@@ -6,7 +6,8 @@ use [object-oriented programming](https://en.wikipedia.org/wiki/Object-oriented_
 to wrap libuv and the actions. The object system is provided by [Wondermacros](https://github.com/plainc/wondermacros).
 
 Building a REST service with Wrest could not be easier in C. Just write a
-dynamically loaded library of functions that implement the REST commands.
+dynamically loaded [library of functions](https://github.com/plainC/wrest/blob/master/src/rest.c)
+that implement the REST commands.
 When the server is started, use `-m PATH` option to load a specific REST
 service.
 
@@ -16,9 +17,16 @@ service.
 * Install [Wondermacros](https://github.com/plainc/wondermacros)
 * `cd src && make`
 
+To build your own REST service library type
+
+```
+gcc -c -fPIC mylib.c
+gcc -o libmylib.so -shared -FPIC mylib.o
+```
+
 ## How to run
 
-To start the server, type `./server -m ./librest.so`. It will start the
+To start the server, type e.g. `./server -m ./librest.so`. It will start the
 server in address `0.0.0.0` on port 9000. To change the IP port, use
 `-p INT` option. To change the IP address, type the address as last argument.
 
