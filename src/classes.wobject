@@ -32,10 +32,6 @@ class UVtcpServer : UVtcp
   signal on_connection_close(const char* message)
 
 
-class UVtcpServerConnection
-  read struct UVtcpServer* server
-  public struct StrRope* rope
-
 
 class RestServer : UVtcpServer
 
@@ -45,5 +41,14 @@ class RestServer : UVtcpServer
   signal on_put(char* uri, char* body, char** response, size_t* response_length)
   signal on_patch(char* uri, char* body, char** response, size_t* response_length)
   signal on_delete(char* uri, char** response, size_t* response_length)
+  signal on_quit(char* uri, char** response, size_t* response_length)
 
+
+class UVtcpClient : UVtcp
+  read uv_connect_t* conn
+  private const char* message
+  private size_t len
+
+  construct
+  public int connect(const char* message, size_t len)
 

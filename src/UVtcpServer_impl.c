@@ -47,18 +47,18 @@ on_write(uv_write_t *req, int status)
 static void
 on_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buf)
 {
-    struct UVtcpServerConnection* conn = (struct UVtcpServerConnection*) client->data;
+    struct UVtcpServer* conn = (struct UVtcpServer*) client->data;
 
     if (nread < 0) {
         if (nread != UV_EOF) {
             uv_close((uv_handle_t*) client, NULL);
-            W_EMIT(W_OBJECT_AS(conn->server,UVtcpServer),on_error, uv_err_name(nread));
+            W_EMIT(W_OBJECT_AS(conn,UVtcpServer),on_error, uv_err_name(nread));
         }
     } else if (nread > 0) {
         char* response = NULL;
         size_t response_size;
 
-        W_EMIT(W_OBJECT_AS(conn->server,UVtcpServer),on_data, buf->base, nread, &response, &response_size);
+        W_EMIT(W_OBJECT_AS(conn,UVtcpServer),on_data, buf->base, nread, &response, &response_size);
 
         if (!response) {
             response = strdup("Ok");
@@ -67,9 +67,11 @@ on_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buf)
 
         uv_write_t *req = (uv_write_t *) malloc(sizeof(uv_write_t));
         uv_buf_t write_buf = uv_buf_init(response, response_size);
-        req->data = W_OBJECT_AS(conn->server,UVtcpServer);
+        req->data = W_OBJECT_AS(conn,UVtcpServer);
         uv_write(req, client, &write_buf, 1, on_write);
+        free(response);
     }
+
     if (buf->base)
         free(buf->base);
 }
@@ -91,7 +93,7 @@ on_new_connection(uv_stream_t *server, int status)
         return;
     }
     uv_tcp_init((uv_loop_t*) self->loop->loop, client);
-    client->data = W_NEW(UVtcpServerConnection, .server=self);
+    client->data = self;
 
     if (uv_accept(server, (uv_stream_t*) client) == 0)
         uv_read_start((uv_stream_t*) client, on_alloc_buffer, on_read);

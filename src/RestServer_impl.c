@@ -33,7 +33,8 @@ parse_http(const char* data, size_t size, int* mark_command, int* mark_uri, int*
             }
             break;
         case BODY:
-            if (data[i] == '\r' && i+4 < size && data[i+1] == '\n' && data[i+2] == '\r' && data[i+3] == '\n') {
+            if (data[i] == '\r' && i+4 < size && data[i+1] == '\n' &&
+                data[i+2] == '\r' && data[i+3] == '\n') {
                 state = DONE;
                 *mark_body = i+4;
             }
@@ -80,6 +81,8 @@ data_cb(struct RestServer* self, void* context, const char* data, size_t length,
         W_EMIT(self,on_patch, uri, body, response, response_size);
     else if (len_command == 6 && strncmp(command, "DELETE", 6)==0)
         W_EMIT(self,on_delete, uri, response, response_size);
+    else if (len_command == 4 && strncmp(command, "QUIT", 4)==0)
+        W_EMIT(self,on_quit, uri, response, response_size);
     else
         W_EMIT(self,on_error, "Invalid command");
 
