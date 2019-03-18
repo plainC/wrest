@@ -22,7 +22,7 @@ wrest: $(OBJS) server.o UVloop_class.h
 	cc -o wrest server.o $(OBJS) -luv -ldl
 
 client: $(OBJS) client.o UVloop_class.h
-	cc -o client client.o $(OBJS) -luv
+	cc -o client client.o UVloop.o UVtcp.o UVtcpClient.o -luv
 
 $(OBJS): $(SRCS) $(HEADERS) $(CLASSES) $(C_SRCS) server.c
 	cc -c $(CFLAGS) server.c client.c $^

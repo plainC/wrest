@@ -1,6 +1,14 @@
 #include "wrest.h"
 #include <dlfcn.h>
 
+/**/
+const char* http_status_phrase[1024] = {
+#define XMACRO(code,phrase) [code] = # phrase,
+#include <wrest/http_status_codes.h>
+#undef XMACRO
+};
+/**/
+
 void
 error_cb(struct UVtcpServer* self, void* context, const char* message)
 {
@@ -9,44 +17,43 @@ error_cb(struct UVtcpServer* self, void* context, const char* message)
 
 void
 quit_cb(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-        char** response, size_t* response_size)
+        struct wrest_http_resp* resp)
 {
     printf("QUIT: '%s'\n", req->uri);
 
-    *response = strdup("QUIT ok");
-    *response_size = strlen(*response);
+    resp->body = strdup("QUIT ok");
 
     W_CALL_VOID(self->loop,stop);
 }
 
 void
 get_cb(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-        char** response, size_t* response_size)
+       struct wrest_http_resp* resp)
 {
     printf("GET: '%s'\n", req->uri);
 
-    *response = strdup("GET ok");
-    *response_size = strlen(*response);
+    resp->body = strdup("<html><body>GET ok</body></html>");
+    resp->status_code = 200;
 }
 
 void
 post_cb(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-        char** response, size_t* response_size)
+        struct wrest_http_resp* resp)
 {
     printf("POST: '%s'\nBody:\n%s\n", req->uri, req->body);
 
-    *response = strdup("POST ok");
-    *response_size = strlen(*response);
+    resp->body = strdup("POST ok");
+    resp->status_code = 200;
 }
 
 void
 put_cb(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-        char** response, size_t* response_size)
+       struct wrest_http_resp* resp)
 {
     printf("PUT: '%s'\nBody:\n%s\n", req->uri, req->body);
 
-    *response = strdup("PUT ok");
-    *response_size = strlen(*response);
+    resp->body = strdup("PUT ok");
+    resp->status_code = 200;
 }
 
 static void
@@ -71,25 +78,25 @@ load_module(const char* path, struct RestServer* server, char* name)
     W_OBJECT_SIGNAL_TYPE* h;
     char* error;
     void (*rest_get)(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-        char** response, size_t* response_size);
+        struct wrest_http_resp* resp);
     void (*rest_head)(struct UVtcpServer* self, void* context, struct wrest_http_req* req, 
-        char** response, size_t* response_size);
+        struct wrest_http_resp* resp);
     void (*rest_delete)(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-        char** response, size_t* response_size);
+        struct wrest_http_resp* resp);
     void (*rest_connect)(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-        char** response, size_t* response_size);
+        struct wrest_http_resp* resp);
     void (*rest_trace)(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-        char** response, size_t* response_size);
+        struct wrest_http_resp* resp);
     void (*rest_quit)(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-        char** response, size_t* response_size);
+        struct wrest_http_resp* resp);
     void (*rest_post)(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-        char** response, size_t* response_size);
+        struct wrest_http_resp* resp);
     void (*rest_put)(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-        char** response, size_t* response_size);
+        struct wrest_http_resp* resp);
     void (*rest_patch)(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-        char** response, size_t* response_size);
+        struct wrest_http_resp* resp);
     void (*rest_options)(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-        char** response, size_t* response_size);
+        struct wrest_http_resp* resp);
 
     dlerror();
 
@@ -180,4 +187,3 @@ main(int argc, char** argv)
 
     return 0;
 }
-

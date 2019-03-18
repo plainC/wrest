@@ -24,6 +24,8 @@
 #include <wondermacros/list/cslist.h>
 #include <wondermacros/objects/api.h>
 
+/**/
+
 /* Generate struct wrest_http_req. */
 #define W_XFILE            <wrest/http_request_fields.h>
 #define W_NAME             wrest_http_req
@@ -36,6 +38,29 @@
     const char* body;         \
     /**/
 #include <wondermacros/x/struct_fields.h>
+
+/**/
+
+
+/**/
+
+/* Generate struct wrest_http_resp. */
+#define W_XFILE            <wrest/http_response_fields.h>
+#define W_NAME             wrest_http_resp
+#define W_NAME_INDEX       1
+#define W_TYPE             const char*
+#define W_PREFIX_FIELDS        \
+    const char* body;          \
+    int status_code;           \
+    const char* http_version;  \
+    const char* reason_phrase; \
+    /**/
+#include <wondermacros/x/struct_fields.h>
+
+/**/
+
+extern const char* http_status_phrase[1024];
+
 
 #include "classes.h"
 

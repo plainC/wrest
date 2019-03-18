@@ -2,102 +2,103 @@
 
 void
 rest_get(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-      char** response, size_t* response_size)
+      struct wrest_http_resp* resp)
 {
     printf("MODULE GET: '%s'\n\n", req->uri);
 
-    *response = strdup("GET ok");
-    *response_size = strlen(*response);
+    resp->body = strdup("GET ok");
+    resp->status_code = 200;
 }
 
 void
 rest_head(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-      char** response, size_t* response_size)
+      struct wrest_http_resp* resp)
 {
     printf("MODULE HEAD: '%s'\n\n", req->uri);
 
-    *response = strdup("HEAD ok");
-    *response_size = strlen(*response);
+    resp->body = strdup("HEAD ok");
+    resp->status_code = 200;
 }
 
 void
 rest_delete(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-      char** response, size_t* response_size)
+      struct wrest_http_resp* resp)
 {
     printf("MODULE DELETE: '%s'\n\n", req->uri);
 
-    *response = strdup("DELETE ok");
-    *response_size = strlen(*response);
+    resp->body = strdup("DELETE ok");
+    resp->status_code = 200;
 }
 
 void
 rest_trace(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-      char** response, size_t* response_size)
+      struct wrest_http_resp* resp)
 {
     printf("MODULE TRACE: '%s'\n\n", req->uri);
 
-    *response = strdup("TRACE ok");
-    *response_size = strlen(*response);
+    resp->body = strdup("TRACE ok");
+    resp->status_code = 200;
 }
 
 void
 rest_connect(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-      char** response, size_t* response_size)
+      struct wrest_http_resp* resp)
 {
     printf("MODULE TRACE: '%s'\n\n", req->uri);
 
-    *response = strdup("TRACE ok");
-    *response_size = strlen(*response);
+    resp->body = strdup("TRACE ok");
+    resp->status_code = 200;
 }
 
 void
 rest_quit(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-      char** response, size_t* response_size)
+      struct wrest_http_resp* resp)
 {
     printf("MODULE QUIT: '%s'\n\n", req->uri);
 
-    *response = strdup("QUIT ok");
-    *response_size = strlen(*response);
+    resp->body = strdup("QUIT ok");
+    resp->status_code = 200;
 
     W_CALL_VOID(self->loop,stop);
 }
 
 void
 rest_post(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-      char** response, size_t* response_size)
+      struct wrest_http_resp* resp)
 {
     printf("MODULE POST: '%s'\n\n", req->uri);
 
-    *response = strdup("POST ok");
-    *response_size = strlen(*response);
+    resp->body = strdup("POST ok");
+    resp->status_code = 200;
 }
 
 void
 rest_put(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-      char** response, size_t* response_size)
+      struct wrest_http_resp* resp)
 {
     printf("MODULE PUT: '%s'\n\n", req->uri);
 
-    *response = strdup("PUT ok");
-    *response_size = strlen(*response);
+    resp->body = strdup("PUT ok");
+    resp->status_code = 200;
 }
 
 void
 rest_patch(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-      char** response, size_t* response_size)
+      struct wrest_http_resp* resp)
 {
     printf("MODULE PATCH: '%s'\n\n", req->uri);
 
-    *response = strdup("PATCH ok");
-    *response_size = strlen(*response);
+    resp->body = strdup("PATCH ok");
+    resp->status_code = 200;
 }
 
 void
 rest_options(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
-      char** response, size_t* response_size)
+      struct wrest_http_resp* resp)
 {
     printf("MODULE OPTIONS: '%s'\n\n", req->uri);
 
-    *response = strdup("OPTIONS ok");
-    *response_size = strlen(*response);
+    resp->body = strdup("OPTIONS ok");
+    resp->status_code = 200;
 }
+

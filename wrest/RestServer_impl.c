@@ -147,6 +147,9 @@ data_cb(struct RestServer* self, void* context, char* data, size_t length,
     struct wrest_http_req req;
     bzero(&req, sizeof(struct wrest_http_req));
 
+    struct wrest_http_resp resp;
+    bzero(&resp, sizeof(struct wrest_http_resp));
+
     if (parse_http(data, &length, &req)) {
         W_EMIT(self,on_error, "Invalid HTTP request");
         return;
@@ -162,7 +165,7 @@ data_cb(struct RestServer* self, void* context, char* data, size_t length,
 
 #define COMMAND(lc,...)                                                            \
         case W_PP_CHARSEQ_TO_UINT(uint64_t,BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__)): \
-            W_EMIT(self,on_##lc, &req, response, response_size);                   \
+            W_EMIT(self,on_##lc, &req, &resp);                                     \
             break
 
             COMMAND(get,G,E,T);
@@ -180,9 +183,52 @@ data_cb(struct RestServer* self, void* context, char* data, size_t length,
 
         default:
             W_EMIT(self,on_error, "Invalid HTTP method");
-            break;
+            return;
         }
     }
+
+    int body_length = resp.body ? strlen(resp.body) : 0;
+    char buffer[4096 + body_length];
+    char* p = buffer;
+
+    if (!resp.content_length) {
+        char l[64];
+        sprintf(l, "%d", body_length);
+        resp.content_length = strdup(l);
+    }
+
+#define WRITE(...) p += sprintf(p, __VA_ARGS__)
+
+    /**/
+
+    if (resp.status_code) {
+        const char* phrase = "Unknown";
+        const char* version = "HTTP/1.1";
+
+        if (resp.status_code < 1024 && http_status_phrase[resp.status_code])
+            phrase = http_status_phrase[resp.status_code];
+
+        WRITE("%s %d %s\r\n", version, resp.status_code, phrase);
+    }
+
+    /**/
+
+#define XMACRO(name,field,...)                  \
+    if (resp.field) {                           \
+        WRITE("%s: %s\r\n", #name, resp.field); \
+        free((void*) resp.field);               \
+    }
+#include <wrest/http_response_fields.h>
+#undef XMACRO
+
+    /**/
+
+    if (resp.body) {
+        WRITE("\r\n%s", resp.body);
+        free((void*) resp.body);
+    }
+    *response = strdup(buffer);
+    *response_size = p - buffer;
 }
 
 #endif
