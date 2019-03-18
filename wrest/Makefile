@@ -29,11 +29,13 @@ $(OBJS): $(SRCS) $(HEADERS) $(CLASSES) $(C_SRCS) server.c
 
 install: wrest
 	mkdir -p /usr/include/wrest
-	cp wrest.h \
-		classes.h \
-		forward_declare.h \
-		http_request_fields.h \
-		$(HEADERS) \
+	cp wrest.h                     \
+		classes.h              \
+		forward_declare.h      \
+		http_request_fields.h  \
+		http_response_fields.h \
+		http_status_codes.h    \
+		$(HEADERS)             \
 		$(CLASSES) /usr/include/wrest
 	cp wrest /usr/bin
 
