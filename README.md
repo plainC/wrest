@@ -6,7 +6,7 @@ use [object-oriented programming](https://en.wikipedia.org/wiki/Object-oriented_
 to wrap libuv and the actions. The object system is provided by [Wondermacros](https://github.com/plainc/wondermacros).
 
 Building a REST service with Wrest could not be easier in C. Just write a
-dynamically loaded [library of functions](https://github.com/plainC/wrest/blob/master/src/rest.c)
+dynamically loaded [library of functions](https://github.com/plainC/wrest/blob/master/wrest/rest.c)
 that implement the REST methods.
 When the server is started, use `-m PATH` option to load a specific REST
 service. Each REST method is implemented as a separate callback which gets
