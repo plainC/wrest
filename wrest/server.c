@@ -8,10 +8,10 @@ error_cb(struct UVtcpServer* self, void* context, const char* message)
 }
 
 void
-quit_cb(struct UVtcpServer* self, void* context, const char* uri,
+quit_cb(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
         char** response, size_t* response_size)
 {
-    printf("QUIT: '%s'\n", uri);
+    printf("QUIT: '%s'\n", req->uri);
 
     *response = strdup("QUIT ok");
     *response_size = strlen(*response);
@@ -20,30 +20,30 @@ quit_cb(struct UVtcpServer* self, void* context, const char* uri,
 }
 
 void
-get_cb(struct UVtcpServer* self, void* context, const char* uri,
+get_cb(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
         char** response, size_t* response_size)
 {
-    printf("GET: '%s'\n", uri);
+    printf("GET: '%s'\n", req->uri);
 
     *response = strdup("GET ok");
     *response_size = strlen(*response);
 }
 
 void
-post_cb(struct UVtcpServer* self, void* context, const char* uri, char* body,
+post_cb(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
         char** response, size_t* response_size)
 {
-    printf("POST: '%s'\nBody:\n%s\n", uri, body);
+    printf("POST: '%s'\nBody:\n%s\n", req->uri, req->body);
 
     *response = strdup("POST ok");
     *response_size = strlen(*response);
 }
 
 void
-put_cb(struct UVtcpServer* self, void* context, const char* uri, char* body,
+put_cb(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
         char** response, size_t* response_size)
 {
-    printf("PUT: '%s'\nBody:\n%s\n", uri, body);
+    printf("PUT: '%s'\nBody:\n%s\n", req->uri, req->body);
 
     *response = strdup("PUT ok");
     *response_size = strlen(*response);
@@ -70,25 +70,25 @@ load_module(const char* path, struct RestServer* server, char* name)
 
     W_OBJECT_SIGNAL_TYPE* h;
     char* error;
-    void (*rest_get)(struct UVtcpServer* self, void* context, const char* uri,
+    void (*rest_get)(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
         char** response, size_t* response_size);
-    void (*rest_head)(struct UVtcpServer* self, void* context, const char* uri, 
+    void (*rest_head)(struct UVtcpServer* self, void* context, struct wrest_http_req* req, 
         char** response, size_t* response_size);
-    void (*rest_delete)(struct UVtcpServer* self, void* context, const char* uri,
+    void (*rest_delete)(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
         char** response, size_t* response_size);
-    void (*rest_connect)(struct UVtcpServer* self, void* context, const char* uri,
+    void (*rest_connect)(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
         char** response, size_t* response_size);
-    void (*rest_trace)(struct UVtcpServer* self, void* context, const char* uri,
+    void (*rest_trace)(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
         char** response, size_t* response_size);
-    void (*rest_quit)(struct UVtcpServer* self, void* context, const char* uri,
+    void (*rest_quit)(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
         char** response, size_t* response_size);
-    void (*rest_post)(struct UVtcpServer* self, void* context, const char* uri, char* body,
+    void (*rest_post)(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
         char** response, size_t* response_size);
-    void (*rest_put)(struct UVtcpServer* self, void* context, const char* uri, char* body,
+    void (*rest_put)(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
         char** response, size_t* response_size);
-    void (*rest_patch)(struct UVtcpServer* self, void* context, const char* uri, char* body,
+    void (*rest_patch)(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
         char** response, size_t* response_size);
-    void (*rest_options)(struct UVtcpServer* self, void* context, const char* uri, char* body,
+    void (*rest_options)(struct UVtcpServer* self, void* context, struct wrest_http_req* req,
         char** response, size_t* response_size);
 
     dlerror();
@@ -180,3 +180,4 @@ main(int argc, char** argv)
 
     return 0;
 }
+

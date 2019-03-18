@@ -1,7 +1,7 @@
-CFLAGS =            \
-	-I .        \
+CFLAGS =                                   \
+	-I ..                              \
 	-I ../../wondermacros/wondermacros \
-        -g          \
+        -g                                 \
 
 CLASSES = $(wildcard *_class.h)
 SRCS    = $(patsubst %_class.h,%.c,$(CLASSES))
@@ -15,7 +15,7 @@ build_src: classes.wobject
 	../../wondermacros/tools/wobject -c classes.wobject
 
 librest.so: rest.c
-	gcc -c -fPIC rest.c
+	gcc $(CFLAGS) -c -fPIC rest.c
 	gcc -o librest.so -shared -FPIC rest.o
 
 wrest: $(OBJS) server.o UVloop_class.h
@@ -28,6 +28,13 @@ $(OBJS): $(SRCS) $(HEADERS) $(CLASSES) $(C_SRCS) server.c
 	cc -c $(CFLAGS) server.c client.c $^
 
 install: wrest
+	mkdir -p /usr/include/wrest
+	cp wrest.h \
+		classes.h \
+		forward_declare.h \
+		http_request_fields.h \
+		$(HEADERS) \
+		$(CLASSES) /usr/include/wrest
 	cp wrest /usr/bin
 
 clean:
