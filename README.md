@@ -7,9 +7,10 @@ to wrap libuv and the actions. The object system is provided by [Wondermacros](h
 
 Building a REST service with Wrest could not be easier in C. Just write a
 dynamically loaded [library of functions](https://github.com/plainC/wrest/blob/master/src/rest.c)
-that implement the REST commands.
+that implement the REST methods.
 When the server is started, use `-m PATH` option to load a specific REST
-service.
+service. Each REST method is implemented as a separate callback which gets
+a parsed HTTP request as an argument.
 
 ## To Build
 
@@ -43,5 +44,4 @@ This is just a demo at a moment.
 * The server currently blocks for each request.
 * The messages are read using single read.
 * Client reads only small files for a message body (4092 bytes).
-* No HTTP header support.
 * No SSL etc.
