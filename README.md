@@ -10,7 +10,11 @@ dynamically loaded [library of functions](https://github.com/plainC/wrest/blob/m
 that implement the REST methods.
 When the server is started, use `-m PATH` option to load a specific REST
 service. Each REST method is implemented as a separate callback which gets
-a parsed HTTP request as an argument.
+a parsed HTTP request as an argument. The callback will then fill HTTP response
+structure and returns. Only fields that are set, e.g.
+`resp->set_cookie = "UserID=JohnSmith";`, are written to the server's response
+message. The response body should be written to ´resp->body` and it must be
+\0-terminated.
 
 ## To Build
 
