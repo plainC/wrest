@@ -1,6 +1,6 @@
 CFLAGS =                                   \
 	-I ..                              \
-	-I ../../wondermacros/wondermacros \
+	-I ../wclasses \
         -g                                 \
 
 CLASSES = $(wildcard *_class.h)
@@ -12,7 +12,7 @@ OBJS    = $(patsubst %.c,%.o,$(SRCS))
 all: build_src wrest client librest.so
 
 build_src: classes.wobject
-	../../wondermacros/tools/wobject -c classes.wobject
+	../wclasses/wondermacros/tools/wobject -c classes.wobject
 
 librest.so: rest.c
 	gcc $(CFLAGS) -c -fPIC rest.c
