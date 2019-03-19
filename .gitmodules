@@ -1,0 +1,3 @@
+[submodule "wclasses"]
+	path = wclasses
+	url = https://github.com/plainC/wclasses.git
