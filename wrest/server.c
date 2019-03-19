@@ -145,7 +145,7 @@ main(int argc, char** argv)
                 else
                     module = argv[++i];
             else
-                if (strchr(argv[i],'.')==NULL)
+                if (strchr(argv[i],'.')==NULL && strchr(argv[i],':')==NULL)
                     usage(argv[0]);
                 else
                     address = argv[i];

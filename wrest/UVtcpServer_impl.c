@@ -2,21 +2,17 @@
 
 CONSTRUCT(UVtcpServer)
 {
-    if (!self->loop)
-        printf("ERROR: Loop not set\n");
-    else
-        uv_tcp_init((uv_loop_t*) self->loop->loop, &self->handle);
+    W_CALL_ACONSTRUCT(UVtcp);
 }
 
 M__bind
 {
-    if (!self->address)
-        return 1;
-    if (!self->port)
-        return 2;
+    int status = W_CALL_VOID(self,parse_address);
 
-    if (uv_ip4_addr(self->address, self->port, &self->addr))
-        return 3;
+    if (status) {
+        printf("Parse address failed: %d\n", status);
+        return status;
+    }
 
     self->handle.data = self;
 
@@ -67,7 +63,15 @@ on_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buf)
         char* response = NULL;
         size_t response_size;
 
-        W_EMIT(W_OBJECT_AS(conn,UVtcpServer),on_data, buf->base, nread, &response, &response_size);
+        struct sockaddr_storage name={0};
+        int namelen=0;
+        uv_tcp_getsockname((const uv_tcp_t*) client, (struct sockaddr*) &name,&namelen);
+
+        struct sockaddr_in6* a = (struct sockaddr_in6*) &name;
+        char ip[17]={0};
+        uv_ip4_name((const struct sockaddr_in *) &a->sin6_addr,ip,sizeof(ip));
+
+        W_EMIT(W_OBJECT_AS(conn,UVtcpServer),on_data, buf->base, nread, ip, &response, &response_size);
 
         if (!response) {
             response = strdup("Ok");
@@ -105,9 +109,9 @@ on_new_connection(uv_stream_t *server, int status)
     uv_tcp_init((uv_loop_t*) self->loop->loop, client);
     client->data = self;
 
-    if (uv_accept(server, (uv_stream_t*) client) == 0)
+    if (uv_accept(server, (uv_stream_t*) client) == 0) {
         uv_read_start((uv_stream_t*) client, on_alloc_buffer, on_read);
-    else {
+    } else {
         uv_close((uv_handle_t*) client, NULL);
         W_EMIT(self,on_error, "uv_accept failed");
     }

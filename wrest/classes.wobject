@@ -18,6 +18,8 @@ abstract class UVtcp
   read int port
   read struct sockaddr_in addr
 
+  construct
+  public int parse_address()
   signal on_error(const char* message)
 
 
@@ -27,7 +29,7 @@ class UVtcpServer : UVtcp
   public int bind(int flags)
   public int listen(int backlog)
 
-  signal on_data(char* data, size_t size, char** response, size_t* response_size)
+  signal on_data(char* data, size_t size, char* ip, char** response, size_t* response_size)
   signal on_connection_open(const char* message)
   signal on_connection_close(const char* message)
 

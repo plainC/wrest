@@ -36,6 +36,7 @@
     const char* uri;          \
     const char* http_version; \
     const char* body;         \
+    const char* client_ip;    \
     /**/
 #include <wondermacros/x/struct_fields.h>
 

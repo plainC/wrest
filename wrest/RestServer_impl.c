@@ -7,7 +7,7 @@
 
 static void
 data_cb(struct RestServer* self, void* context, char* data, size_t length,
-        char** response, size_t* response_size);
+        char* ip, char** response, size_t* response_size);
 
 CONSTRUCT(RestServer)
 {
@@ -95,7 +95,7 @@ parse_fields(char* data, size_t* size, struct wrest_http_req* req)
             *((char**) W_REF_VOID_PTR(req, match->value)) = start;
             data = end;
         }
-        colon = strchr(data, ':');
+        colon = memchr(data, ':', *size);
     }
 
 #undef NEXT
@@ -138,7 +138,7 @@ parse_http(char* data, size_t* size, struct wrest_http_req* req)
 
 static void
 data_cb(struct RestServer* self, void* context, char* data, size_t length,
-        char** response, size_t* response_size)
+        char* ip, char** response, size_t* response_size)
 {
     int mark_command;
     int mark_uri;
@@ -150,6 +150,7 @@ data_cb(struct RestServer* self, void* context, char* data, size_t length,
     struct wrest_http_resp resp;
     bzero(&resp, sizeof(struct wrest_http_resp));
 
+    req.client_ip = ip;
     if (parse_http(data, &length, &req)) {
         W_EMIT(self,on_error, "Invalid HTTP request");
         return;

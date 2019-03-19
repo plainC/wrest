@@ -26,8 +26,7 @@ int main(int argc, char** argv)
     struct UVloop* loop = W_NEW(UVloop);
     struct UVtcpClient* client = W_NEW(UVtcpClient,
         .loop = loop,
-        .address="0.0.0.0",
-        .port=9000);
+        .address="0.0.0.0:9000");
 
     char* command = "GET";
     char* uri = "/";
@@ -46,7 +45,9 @@ int main(int argc, char** argv)
 
     char buffer[strlen(command)+strlen(uri)+32];
     sprintf(buffer, "%s %s HTTP/1.1%s", command, uri, body);
-    W_CALL(client,connect)(buffer,strlen(buffer));
+    if (W_CALL(client,connect)(buffer,strlen(buffer))) {
+        printf("Unable to connect: %s %d\n", client->address, client->port);
+    }
     W_CALL(loop,run)(UV_RUN_DEFAULT);
 
     W_CALL_VOID(client,free);

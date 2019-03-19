@@ -2,10 +2,7 @@
 
 CONSTRUCT(UVtcpClient)
 {
-    if (!self->loop)
-        printf("ERROR: Loop not set\n");
-    else
-        uv_tcp_init((uv_loop_t*) self->loop->loop, &self->handle);
+    W_CALL_ACONSTRUCT(UVtcp);
 }
 
 FINALIZE(UVtcpClient)
@@ -78,19 +75,19 @@ on_connection(uv_connect_t* req, int status)
 M__connect
 {
     self->conn = malloc(sizeof(uv_connect_t));
-
-    if (!self->address)
+    if (!self->conn)
         return 1;
-    if (!self->port)
-        return 2;
+printf("conn=%p\n", self->conn);
 
-    if (uv_ip4_addr(self->address, self->port, &self->addr))
-        return 3;
+    int status = W_CALL_VOID(self,parse_address);
 
+    if (status)
+        return status;
+printf("conn=%p\n", self->conn);
     self->conn->data = self;
     self->message = message;
     self->len = len;
-
+printf("Connecting...\n");
     if (uv_tcp_connect(self->conn, &self->handle,
         (const struct sockaddr*) &self->addr, on_connection))
         return 4;
